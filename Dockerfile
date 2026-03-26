@@ -12,7 +12,9 @@ RUN apt-get update \
 COPY . .
 
 ENV NODE_ENV=production
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/postgres"
 
+RUN npm run generate:prod
 RUN npm run build
 
 FROM node:20-bookworm-slim AS runner
