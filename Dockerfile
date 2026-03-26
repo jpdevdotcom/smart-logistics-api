@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN apt-get update \
   && apt-get upgrade -y \
-  && apt-get install -y --no-install-recommends ca-certificates \
+  && apt-get install -y --no-install-recommends ca-certificates openssl \
   && rm -rf /var/lib/apt/lists/* \
   && npm ci
 
