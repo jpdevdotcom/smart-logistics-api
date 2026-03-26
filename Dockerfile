@@ -30,4 +30,4 @@ COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run prisma:prod -- generate && node dist/server.js"]
+CMD ["node", "dist/server.js"]
