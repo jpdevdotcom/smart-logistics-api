@@ -1,0 +1,18 @@
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN apt-get update \
+  && apt-get upgrade -y \
+  && apt-get install -y --no-install-recommends ca-certificates \
+  && rm -rf /var/lib/apt/lists/* \
+  && npm ci
+
+COPY . .
+
+ENV NODE_ENV=development
+
+EXPOSE 3000
+
+ENV CHOKIDAR_USEPOLLING=true

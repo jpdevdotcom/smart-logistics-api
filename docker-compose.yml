@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  api:
+    container_name: smart-logistics-api
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.development
+    environment:
+      NODE_ENV: development
+    volumes:
+      - .:/app
+    command: sh -c "npm run prisma:dev -- generate && npm run start:dev"
