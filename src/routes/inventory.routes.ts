@@ -6,12 +6,14 @@ import {
 } from "../validators/inventory.schema";
 import {
   addInventoryController,
+  getInventoryByIdHandler,
   inventoryReportHandler,
   transferInventoryHandler,
 } from "../controllers/inventory.controller";
 
 const router = Router();
 
+router.get("/:id", getInventoryByIdHandler);
 router.post("/add", validateBody(addInventorySchema), addInventoryController);
 router.post(
   "/transfer",
