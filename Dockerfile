@@ -11,12 +11,9 @@ RUN apt-get update \
 
 COPY . .
 
-ARG DATABASE_URL
-ENV DATABASE_URL=$DATABASE_URL
 ENV NODE_ENV=production
 
-RUN npm run prisma:prod -- generate
-RUN npx tsc
+RUN npm run build
 
 FROM node:20-bookworm-slim AS runner
 
@@ -27,7 +24,9 @@ ENV NODE_ENV=production
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 EXPOSE 3000
 
-CMD ["node", "dist/server.js"]
+CMD ["sh", "-c", "npm run migrate:prod && npm run generate:prod && npm run start:prod"]
