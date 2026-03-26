@@ -8,7 +8,7 @@
     "prisma:dev": "cross-env NODE_ENV=development prisma",
     "prisma:prod": "cross-env NODE_ENV=production prisma",
     "start:dev": "cross-env NODE_ENV=development ts-node src/server.ts",
-    "start:prod": "cross-env NODE_ENV=production node dist/server.js",
+    "start:prod": "npm run build && node dist/server.js",
     "prisma:seed": "cross-env NODE_ENV=development prisma db seed",
     "build": "tsc",
     "migrate:prod": "npm run prisma:prod -- migrate deploy",
