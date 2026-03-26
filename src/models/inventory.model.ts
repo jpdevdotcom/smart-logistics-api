@@ -201,8 +201,9 @@ export const getInventoryReport = async (input: {
   const skip = (page - 1) * limit;
 
   const [totalWarehouses, warehouses] = await Promise.all([
-    prisma.warehouse.count(),
+    prisma.warehouse.count({ where: { deletedAt: null } }),
     prisma.warehouse.findMany({
+      where: { deletedAt: null },
       include: {
         inventory: {
           include: {

@@ -42,6 +42,7 @@ export type WarehouseMinAggregateOutputType = {
   location: string | null
   maxCapacity: number | null
   type: $Enums.WarehouseType | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +53,7 @@ export type WarehouseMaxAggregateOutputType = {
   location: string | null
   maxCapacity: number | null
   type: $Enums.WarehouseType | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +64,7 @@ export type WarehouseCountAggregateOutputType = {
   location: number
   maxCapacity: number
   type: number
+  deletedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -84,6 +87,7 @@ export type WarehouseMinAggregateInputType = {
   location?: true
   maxCapacity?: true
   type?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,6 +98,7 @@ export type WarehouseMaxAggregateInputType = {
   location?: true
   maxCapacity?: true
   type?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -104,6 +109,7 @@ export type WarehouseCountAggregateInputType = {
   location?: true
   maxCapacity?: true
   type?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -201,6 +207,7 @@ export type WarehouseGroupByOutputType = {
   location: string
   maxCapacity: number
   type: $Enums.WarehouseType
+  deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: WarehouseCountAggregateOutputType | null
@@ -234,6 +241,7 @@ export type WarehouseWhereInput = {
   location?: Prisma.StringFilter<"Warehouse"> | string
   maxCapacity?: Prisma.IntFilter<"Warehouse"> | number
   type?: Prisma.EnumWarehouseTypeFilter<"Warehouse"> | $Enums.WarehouseType
+  deletedAt?: Prisma.DateTimeNullableFilter<"Warehouse"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Warehouse"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Warehouse"> | Date | string
   inventory?: Prisma.InventoryListRelationFilter
@@ -245,6 +253,7 @@ export type WarehouseOrderByWithRelationInput = {
   location?: Prisma.SortOrder
   maxCapacity?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   inventory?: Prisma.InventoryOrderByRelationAggregateInput
@@ -259,6 +268,7 @@ export type WarehouseWhereUniqueInput = Prisma.AtLeast<{
   location?: Prisma.StringFilter<"Warehouse"> | string
   maxCapacity?: Prisma.IntFilter<"Warehouse"> | number
   type?: Prisma.EnumWarehouseTypeFilter<"Warehouse"> | $Enums.WarehouseType
+  deletedAt?: Prisma.DateTimeNullableFilter<"Warehouse"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Warehouse"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Warehouse"> | Date | string
   inventory?: Prisma.InventoryListRelationFilter
@@ -270,6 +280,7 @@ export type WarehouseOrderByWithAggregationInput = {
   location?: Prisma.SortOrder
   maxCapacity?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.WarehouseCountOrderByAggregateInput
@@ -288,6 +299,7 @@ export type WarehouseScalarWhereWithAggregatesInput = {
   location?: Prisma.StringWithAggregatesFilter<"Warehouse"> | string
   maxCapacity?: Prisma.IntWithAggregatesFilter<"Warehouse"> | number
   type?: Prisma.EnumWarehouseTypeWithAggregatesFilter<"Warehouse"> | $Enums.WarehouseType
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Warehouse"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Warehouse"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Warehouse"> | Date | string
 }
@@ -297,6 +309,7 @@ export type WarehouseCreateInput = {
   location: string
   maxCapacity: number
   type: $Enums.WarehouseType
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   inventory?: Prisma.InventoryCreateNestedManyWithoutWarehouseInput
@@ -308,6 +321,7 @@ export type WarehouseUncheckedCreateInput = {
   location: string
   maxCapacity: number
   type: $Enums.WarehouseType
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutWarehouseInput
@@ -318,6 +332,7 @@ export type WarehouseUpdateInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   maxCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventory?: Prisma.InventoryUpdateManyWithoutWarehouseNestedInput
@@ -329,6 +344,7 @@ export type WarehouseUncheckedUpdateInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   maxCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventory?: Prisma.InventoryUncheckedUpdateManyWithoutWarehouseNestedInput
@@ -340,6 +356,7 @@ export type WarehouseCreateManyInput = {
   location: string
   maxCapacity: number
   type: $Enums.WarehouseType
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -349,6 +366,7 @@ export type WarehouseUpdateManyMutationInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   maxCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -359,6 +377,7 @@ export type WarehouseUncheckedUpdateManyInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   maxCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -369,6 +388,7 @@ export type WarehouseCountOrderByAggregateInput = {
   location?: Prisma.SortOrder
   maxCapacity?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -384,6 +404,7 @@ export type WarehouseMaxOrderByAggregateInput = {
   location?: Prisma.SortOrder
   maxCapacity?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -394,6 +415,7 @@ export type WarehouseMinOrderByAggregateInput = {
   location?: Prisma.SortOrder
   maxCapacity?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -424,6 +446,10 @@ export type EnumWarehouseTypeFieldUpdateOperationsInput = {
   set?: $Enums.WarehouseType
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
@@ -447,6 +473,7 @@ export type WarehouseCreateWithoutInventoryInput = {
   location: string
   maxCapacity: number
   type: $Enums.WarehouseType
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -457,6 +484,7 @@ export type WarehouseUncheckedCreateWithoutInventoryInput = {
   location: string
   maxCapacity: number
   type: $Enums.WarehouseType
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -482,6 +510,7 @@ export type WarehouseUpdateWithoutInventoryInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   maxCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -492,6 +521,7 @@ export type WarehouseUncheckedUpdateWithoutInventoryInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   maxCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -533,6 +563,7 @@ export type WarehouseSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   location?: boolean
   maxCapacity?: boolean
   type?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   inventory?: boolean | Prisma.Warehouse$inventoryArgs<ExtArgs>
@@ -545,6 +576,7 @@ export type WarehouseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   location?: boolean
   maxCapacity?: boolean
   type?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["warehouse"]>
@@ -555,6 +587,7 @@ export type WarehouseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   location?: boolean
   maxCapacity?: boolean
   type?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["warehouse"]>
@@ -565,11 +598,12 @@ export type WarehouseSelectScalar = {
   location?: boolean
   maxCapacity?: boolean
   type?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type WarehouseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "location" | "maxCapacity" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["warehouse"]>
+export type WarehouseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "location" | "maxCapacity" | "type" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["warehouse"]>
 export type WarehouseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   inventory?: boolean | Prisma.Warehouse$inventoryArgs<ExtArgs>
   _count?: boolean | Prisma.WarehouseCountOutputTypeDefaultArgs<ExtArgs>
@@ -588,6 +622,7 @@ export type $WarehousePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     location: string
     maxCapacity: number
     type: $Enums.WarehouseType
+    deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["warehouse"]>
@@ -1019,6 +1054,7 @@ export interface WarehouseFieldRefs {
   readonly location: Prisma.FieldRef<"Warehouse", 'String'>
   readonly maxCapacity: Prisma.FieldRef<"Warehouse", 'Int'>
   readonly type: Prisma.FieldRef<"Warehouse", 'WarehouseType'>
+  readonly deletedAt: Prisma.FieldRef<"Warehouse", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Warehouse", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Warehouse", 'DateTime'>
 }

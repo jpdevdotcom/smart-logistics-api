@@ -4,8 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider   = "prisma-client"
-  output     = "../generated/prisma"
+  provider   = "prisma-client-js"
 }
 
 
@@ -29,6 +28,7 @@ model Warehouse {
   location    String
   maxCapacity Int
   type        WarehouseType
+  deletedAt   DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
