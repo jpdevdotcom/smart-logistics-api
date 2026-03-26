@@ -1,5 +1,6 @@
 import prisma from "../utils/prisma";
 import { StorageRequirement, WarehouseType } from "@prisma/client";
+import { apiError } from "../utils/api-error";
 
 export const addInventory = async (input: {
   warehouseId: number;
@@ -15,14 +16,11 @@ export const addInventory = async (input: {
         tx.item.findUnique({ where: { id: itemId } }),
       ]);
 
-      if (!warehouse && !item) {
-        return { error: "Warehouse and Item not found.", status: 404 };
-      }
       if (!warehouse) {
-        return { error: "Warehouse not found.", status: 404 };
+        return apiError("WAREHOUSE_NOT_FOUND", "Warehouse not found.", 404);
       }
       if (!item) {
-        return { error: "Item not found.", status: 404 };
+        return apiError("ITEM_NOT_FOUND", "Item not found.", 404);
       }
 
       // Rule 1: Cold items cannot go into Standard warehouse
@@ -30,10 +28,11 @@ export const addInventory = async (input: {
         item.storageRequirement === StorageRequirement.COLD &&
         warehouse.type === WarehouseType.STANDARD
       ) {
-        return {
-          error: "Cold items cannot be stored in a Standard warehouse.",
-          status: 400,
-        };
+        return apiError(
+          "INVALID_WAREHOUSE_TYPE",
+          "Cold items cannot be stored in a Standard warehouse.",
+          422,
+        );
       }
 
       // Rule 2: Capacity check
@@ -44,10 +43,11 @@ export const addInventory = async (input: {
 
       const currentQty = sum._sum.quantity ?? 0;
       if (currentQty + quantity > warehouse.maxCapacity) {
-        return {
-          error: "Warehouse capacity exceeded.",
-          status: 400,
-        };
+        return apiError(
+          "INSUFFICIENT_CAPACITY",
+          "Warehouse capacity exceeded.",
+          422,
+        );
       }
 
       const updated = await tx.inventory.upsert({
@@ -72,10 +72,11 @@ export const transferInventory = async (input: {
   const { fromWarehouseId, toWarehouseId, itemId, sku, quantity } = input;
 
   if (fromWarehouseId === toWarehouseId) {
-    return {
-      error: "Source and destination warehouses must be different.",
-      status: 400,
-    };
+    return apiError(
+      "SAME_WAREHOUSE",
+      "Source and destination warehouses must be different.",
+      422,
+    );
   }
 
   return prisma.$transaction(
@@ -83,12 +84,12 @@ export const transferInventory = async (input: {
       const item = await tx.item.findUnique({ where: { id: itemId } });
 
       if (!item) {
-        return { error: "Item not found.", status: 404 };
+        return apiError("ITEM_NOT_FOUND", "Item not found.", 404);
       }
 
       // Ghost stock check: ensure SKU matches the item
       if (item.sku !== sku) {
-        return { error: "SKU does not match the item.", status: 400 };
+        return apiError("SKU_MISMATCH", "SKU does not match the item.", 422);
       }
 
       const [fromWarehouse, toWarehouse] = await Promise.all([
@@ -97,11 +98,19 @@ export const transferInventory = async (input: {
       ]);
 
       if (!fromWarehouse) {
-        return { error: "Source warehouse not found.", status: 404 };
+        return apiError(
+          "SOURCE_WAREHOUSE_NOT_FOUND",
+          "Source warehouse not found.",
+          404,
+        );
       }
 
       if (!toWarehouse) {
-        return { error: "Destination warehouse not found.", status: 404 };
+        return apiError(
+          "DESTINATION_WAREHOUSE_NOT_FOUND",
+          "Destination warehouse not found.",
+          404,
+        );
       }
 
       // Check source stock
@@ -110,10 +119,11 @@ export const transferInventory = async (input: {
       });
 
       if (!sourceInventory || sourceInventory.quantity < quantity) {
-        return {
-          error: "Insufficient stock in source warehouse.",
-          status: 400,
-        };
+        return apiError(
+          "INSUFFICIENT_STOCK",
+          "Insufficient stock in source warehouse.",
+          422,
+        );
       }
 
       // Type check for destination
@@ -121,10 +131,11 @@ export const transferInventory = async (input: {
         item.storageRequirement === StorageRequirement.COLD &&
         toWarehouse.type === WarehouseType.STANDARD
       ) {
-        return {
-          error: "Cold items cannot be stored in a Standard warehouse.",
-          status: 400,
-        };
+        return apiError(
+          "INVALID_WAREHOUSE_TYPE",
+          "Cold items cannot be stored in a Standard warehouse.",
+          422,
+        );
       }
 
       // Capacity check for destination
@@ -135,10 +146,11 @@ export const transferInventory = async (input: {
 
       const destCurrent = destSum._sum.quantity ?? 0;
       if (destCurrent + quantity > toWarehouse.maxCapacity) {
-        return {
-          error: "Destination warehouse capacity exceeded.",
-          status: 400,
-        };
+        return apiError(
+          "INSUFFICIENT_CAPACITY",
+          "Destination warehouse capacity exceeded.",
+          422,
+        );
       }
 
       // Update source (decrement, delete if zero)

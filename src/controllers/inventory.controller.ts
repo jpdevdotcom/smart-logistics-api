@@ -15,11 +15,11 @@ export const addInventoryController = async (req: Request, res: Response) => {
   try {
     const result = await addInventory(req.body as AddInventoryInput);
 
-    if (result.error) {
-      return res.status(result.status).json({ error: result.error });
+    if ("error" in result && result.error) {
+      return res.status(result.code).json(result);
     }
 
-    if (!result.data) {
+    if (!("data" in result) || !result.data) {
       return res.status(500).json({ error: "Inventory data not found." });
     }
     return res.status(200).json(inventoryView(result.data));
@@ -38,7 +38,7 @@ export const transferInventoryHandler = async (req: Request, res: Response) => {
     const result = await transferInventory(req.body as TransferInventoryInput);
 
     if ("error" in result && result.error) {
-      return res.status(result.status).json({ error: result.error });
+      return res.status(result.code).json(result);
     }
 
     if (!("data" in result) || !result.data) {

@@ -3,7 +3,7 @@ import { z } from "zod";
 export const addInventorySchema = z.object({
   warehouseId: z.number().int().positive(),
   itemId: z.number().int().positive(),
-  quantity: z.number().int().positive(),
+  quantity: z.number().int().positive("Quantity must be a positive integer."),
 });
 
 export const transferInventorySchema = z.object({
