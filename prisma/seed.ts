@@ -20,68 +20,52 @@ async function main() {
     'TRUNCATE TABLE "warehouses" RESTART IDENTITY CASCADE',
   );
 
-  // warehouses
-  const w1 = await prisma.warehouse.create({
-    data: {
-      name: "Warehouse A",
-      location: "Manila",
-      maxCapacity: 100,
-      type: WarehouseType.STANDARD,
-    },
-  });
+  // warehouses (20)
+  const warehouses = await Promise.all(
+    Array.from({ length: 20 }, (_, i) =>
+      prisma.warehouse.create({
+        data: {
+          name: `Warehouse ${i + 1}`,
+          location: i % 2 === 0 ? "Manila" : "Cebu",
+          maxCapacity: 100 + i * 5,
+          type:
+            i % 5 === 0 ? WarehouseType.COLD_STORAGE : WarehouseType.STANDARD,
+        },
+      }),
+    ),
+  );
 
-  const w2 = await prisma.warehouse.create({
-    data: {
-      name: "Warehouse B",
-      location: "Cebu",
-      maxCapacity: 50,
-      type: WarehouseType.STANDARD,
-    },
-  });
+  // items (20)
+  const items = await Promise.all(
+    Array.from({ length: 20 }, (_, i) =>
+      prisma.item.create({
+        data: {
+          name: `Item ${i + 1}`,
+          sku: `SKU-${String(i + 1).padStart(5, "0")}-X`,
+          storageRequirement:
+            i % 5 === 0 ? StorageRequirement.COLD : StorageRequirement.STANDARD,
+        },
+      }),
+    ),
+  );
 
-  // items
-  const item1 = await prisma.item.create({
-    data: {
-      name: "Widget",
-      sku: "ABC-12345-X",
-      storageRequirement: StorageRequirement.STANDARD,
-    },
-  });
-
-  const coldItem = await prisma.item.create({
-    data: {
-      name: "Freezer",
-      sku: "XYZ-00001-A",
-      storageRequirement: StorageRequirement.COLD,
-    },
-  });
-
-  // inventory
-  await prisma.inventory.create({
-    data: {
-      warehouseId: w1.id,
-      itemId: item1.id,
-      quantity: 20,
-    },
-  });
-
-  // cold item stock in warehouse A for type-check test
-  await prisma.inventory.create({
-    data: {
-      warehouseId: w1.id,
-      itemId: coldItem.id,
-      quantity: 5,
-    },
-  });
-
-  // give some stock in warehouse B to test capacity
-  await prisma.inventory.create({
-    data: {
-      warehouseId: w2.id,
-      itemId: item1.id,
-      quantity: 45,
-    },
-  });
+  // inventory (20 rows, 1-to-1)
+  await Promise.all(
+    Array.from({ length: 20 }, (_, i) => {
+      const warehouse = warehouses[i];
+      const item = items[i];
+      if (!warehouse || !item) {
+        throw new Error(`Missing warehouse or item at index ${i}`);
+      }
+      return prisma.inventory.create({
+        data: {
+          warehouseId: warehouse.id,
+          itemId: item.id,
+          quantity: 10 + i,
+        },
+      });
+    }),
+  );
 
   console.log("Seed complete.");
 }
