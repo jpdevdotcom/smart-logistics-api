@@ -180,3 +180,58 @@ export const transferInventory = async (input: {
     { isolationLevel: "Serializable" },
   );
 };
+
+export const getInventoryReport = async () => {
+  const warehouses = await prisma.warehouse.findMany({
+    include: {
+      inventory: {
+        include: {
+          item: true,
+        },
+      },
+    },
+    orderBy: { id: "asc" },
+  });
+
+  return warehouses.map((warehouse) => {
+    const currentOccupancy = warehouse.inventory.reduce(
+      (sum, row) => sum + row.quantity,
+      0,
+    );
+
+    const percentFull =
+      warehouse.maxCapacity > 0
+        ? Math.round((currentOccupancy / warehouse.maxCapacity) * 10000) / 100
+        : 0;
+
+    const items = warehouse.inventory.map((row) => ({
+      itemId: row.itemId,
+      name: row.item.name,
+      sku: row.item.sku,
+      storageRequirement: row.item.storageRequirement,
+      quantity: row.quantity,
+      lowStock: row.quantity < 10,
+    }));
+
+    return {
+      warehouseId: warehouse.id,
+      name: warehouse.name,
+      location: warehouse.location,
+      type: warehouse.type,
+      totalCapacity: warehouse.maxCapacity,
+      currentOccupancy,
+      percentFull,
+      items,
+    };
+  });
+};
+
+export const getInventoryById = async (id: number) => {
+  return prisma.inventory.findUnique({
+    where: { id },
+    include: {
+      warehouse: true,
+      item: true,
+    },
+  });
+};

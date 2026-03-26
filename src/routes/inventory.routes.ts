@@ -6,6 +6,7 @@ import {
 } from "../validators/inventory.schema";
 import {
   addInventoryController,
+  inventoryReportHandler,
   transferInventoryHandler,
 } from "../controllers/inventory.controller";
 
@@ -17,5 +18,6 @@ router.post(
   validateBody(transferInventorySchema),
   transferInventoryHandler,
 );
+router.get("/report", inventoryReportHandler);
 
 export default router;
