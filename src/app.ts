@@ -1,6 +1,7 @@
 import express from "express";
 import inventoryRoutes from "./routes/inventory.routes";
 import warehouseRoutes from "./routes/warehouse.routes";
+import itemRoutes from "./routes/item.routes";
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.get("/health", (_req, res) => {
 
 app.use("/warehouses", warehouseRoutes);
 app.use("/inventory", inventoryRoutes);
+app.use("/items", itemRoutes);
 
 export default app;
