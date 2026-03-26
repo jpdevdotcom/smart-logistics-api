@@ -13,6 +13,7 @@ import {
 
 const router = Router();
 
+router.get("/report", inventoryReportHandler);
 router.get("/:id", getInventoryByIdHandler);
 router.post("/add", validateBody(addInventorySchema), addInventoryController);
 router.post(
@@ -20,6 +21,5 @@ router.post(
   validateBody(transferInventorySchema),
   transferInventoryHandler,
 );
-router.get("/report", inventoryReportHandler);
 
 export default router;

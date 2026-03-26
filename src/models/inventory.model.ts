@@ -193,19 +193,30 @@ export const transferInventory = async (input: {
   );
 };
 
-export const getInventoryReport = async () => {
-  const warehouses = await prisma.warehouse.findMany({
-    include: {
-      inventory: {
-        include: {
-          item: true,
+export const getInventoryReport = async (input: {
+  page: number;
+  limit: number;
+}) => {
+  const { page, limit } = input;
+  const skip = (page - 1) * limit;
+
+  const [totalWarehouses, warehouses] = await Promise.all([
+    prisma.warehouse.count(),
+    prisma.warehouse.findMany({
+      include: {
+        inventory: {
+          include: {
+            item: true,
+          },
         },
       },
-    },
-    orderBy: { id: "asc" },
-  });
+      orderBy: { id: "asc" },
+      skip,
+      take: limit,
+    }),
+  ]);
 
-  return warehouses.map((warehouse) => {
+  const data = warehouses.map((warehouse) => {
     const currentOccupancy = warehouse.inventory.reduce(
       (sum, row) => sum + row.quantity,
       0,
@@ -236,6 +247,18 @@ export const getInventoryReport = async () => {
       items,
     };
   });
+
+  const totalPages = Math.max(1, Math.ceil(totalWarehouses / limit));
+
+  return {
+    data,
+    meta: {
+      page,
+      limit,
+      totalWarehouses,
+      totalPages,
+    },
+  };
 };
 
 export const getInventoryById = async (id: number) => {

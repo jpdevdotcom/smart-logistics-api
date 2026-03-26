@@ -17,8 +17,8 @@ export const transferView = (payload: {
   to: inventoryView(payload.to),
 });
 
-export const inventoryReportView = (
-  report: Array<{
+export const inventoryReportView = (report: {
+  data: Array<{
     warehouseId: number;
     name: string;
     location: string;
@@ -34,8 +34,14 @@ export const inventoryReportView = (
       quantity: number;
       lowStock: boolean;
     }>;
-  }>,
-) => report;
+  }>;
+  meta: {
+    page: number;
+    limit: number;
+    totalWarehouses: number;
+    totalPages: number;
+  };
+}) => report;
 
 export const inventoryDetailView = (
   inventory: Inventory & {

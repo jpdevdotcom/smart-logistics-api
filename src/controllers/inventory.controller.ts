@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { apiError } from "../utils/api-error";
 import {
   addInventory,
   getInventoryById,
@@ -51,9 +52,24 @@ export const transferInventoryHandler = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Internal server error." });
   }
 };
-export const inventoryReportHandler = async (_req: Request, res: Response) => {
+export const inventoryReportHandler = async (req: Request, res: Response) => {
+  const page = Number(req.query.page ?? "1");
+  const limit = Number(req.query.limit ?? "20");
+
+  if (!Number.isInteger(page) || page < 1) {
+    return res
+      .status(422)
+      .json(apiError("VALIDATION_ERROR", "page must be >= 1.", 422));
+  }
+
+  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+    return res.status(422).json(
+      apiError("VALIDATION_ERROR", "limit must be between 1 and 100.", 422),
+    );
+  }
+
   try {
-    const report = await getInventoryReport();
+    const report = await getInventoryReport({ page, limit });
     return res.status(200).json(inventoryReportView(report));
   } catch (error) {
     console.error(error);
