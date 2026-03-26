@@ -3,7 +3,7 @@ import { addInventory } from "../models/inventory.model";
 import { AddInventoryInput } from "../validators/inventory.schema";
 import { inventoryView } from "../views/inventory.view";
 
-export const addInventoryHandler = async (req: Request, res: Response) => {
+export const addInventoryController = async (req: Request, res: Response) => {
   try {
     const result = await addInventory(req.body as AddInventoryInput);
 

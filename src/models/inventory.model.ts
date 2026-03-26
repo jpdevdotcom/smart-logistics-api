@@ -15,8 +15,14 @@ export const addInventory = async (input: {
         tx.item.findUnique({ where: { id: itemId } }),
       ]);
 
-      if (!warehouse || !item) {
-        return { error: "Warehouse or item not found.", status: 404 };
+      if (!warehouse && !item) {
+        return { error: "Warehouse and Item not found.", status: 404 };
+      }
+      if (!warehouse) {
+        return { error: "Warehouse not found.", status: 404 };
+      }
+      if (!item) {
+        return { error: "Item not found.", status: 404 };
       }
 
       // Rule 1: Cold items cannot go into Standard warehouse
