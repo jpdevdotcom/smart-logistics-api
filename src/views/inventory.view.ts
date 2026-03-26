@@ -8,3 +8,11 @@ export const inventoryView = (inventory: Inventory) => ({
   createdAt: inventory.createdAt,
   updatedAt: inventory.updatedAt,
 });
+
+export const transferView = (payload: {
+  from: { warehouseId: number; itemId: number; quantity: number };
+  to: Inventory;
+}) => ({
+  from: payload.from,
+  to: inventoryView(payload.to),
+});
