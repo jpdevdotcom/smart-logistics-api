@@ -4,6 +4,13 @@ Inventory and warehouse management API with strict business rules, atomic transf
 
 ---
 
+## Documentation
+
+- `API_GUIDE.md` — Quick guide and examples
+- `API_WORKFLOWS.md` — How the API works (end-to-end flows)
+
+---
+
 ## Business Rules
 
 - **Cold storage** — Cold items cannot be stored in or transferred to Standard warehouses.
