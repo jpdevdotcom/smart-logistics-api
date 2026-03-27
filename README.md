@@ -76,12 +76,14 @@ Create two `.env` files at the project root:
 **.env.development**
 
 ```env
+CORS_ORIGIN=http://localhost:3001
 DATABASE_URL=postgresql://user:pass@host:5432/postgres
 ```
 
 **.env.production**
 
 ```env
+CORS_ORIGIN=https://smart-logostics-client.pages.dev/
 DATABASE_URL=postgresql://user:pass@host:5432/postgres
 ```
 
