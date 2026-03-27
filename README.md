@@ -2,18 +2,34 @@
 
 Inventory and warehouse management API with strict business rules, atomic transfers, cold-storage enforcement, and paginated reporting.
 
+---
+
+## Business Rules
+
+- **Cold storage** — Cold items cannot be stored in or transferred to Standard warehouses.
+- **Atomic transfers** — Transfers are all-or-nothing; any failure leaves stock untouched.
+- **Ghost stock prevention** — SKU mismatch between source inventory and transfer request is caught and rejected.
+- **Input validation** — All request bodies are validated via Zod schemas before hitting the database.
+- **Paginated reports** — `/inventory/report` accepts `page` and `limit` query params.
+- **Safe deletion** — Warehouses can only be deleted when empty; non-empty returns `422`.
+
+---
+
 ## Tech Stack
 
-| Layer            | Technology            |
-| ---------------- | --------------------- |
-| Language         | TypeScript            |
-| Runtime          | Node.js 20+           |
-| ORM              | Prisma                |
-| Validation       | Zod                   |
-| Database         | PostgreSQL (Supabase) |
-| Package Manager  | npm                   |
-| Containerization | Docker                |
-| Unit Test        | Vitest                |
+| Layer            | Technology                     |
+| ---------------- | ------------------------------ |
+| Language         | TypeScript                     |
+| Runtime          | Node.js 20+                    |
+| ORM              | Prisma                         |
+| Validation       | Zod                            |
+| Database         | PostgreSQL (Supabase or local) |
+| Package Manager  | npm                            |
+| Containerization | Docker                         |
+| Unit Test        | Vitest                         |
+| Hosting          | Render                         |
+
+---
 
 ## Requirements
 
@@ -21,7 +37,26 @@ Inventory and warehouse management API with strict business rules, atomic transf
 | ---------- | ----------------- |
 | Node.js    | 20+               |
 | npm        | bundled with Node |
-| PostgreSQL | Supabase          |
+| PostgreSQL | Supabase or local |
+
+---
+
+## Hosted API
+
+The API is deployed on Render and publicly accessible at:
+
+```
+https://smart-logistics-api-cb2c.onrender.com
+```
+
+---
+
+## Postman Documentation
+
+| Environment | Base URL                                        | Docs                                                       |
+| ----------- | ----------------------------------------------- | ---------------------------------------------------------- |
+| Local       | `http://localhost:3000`                         | https://documenter.getpostman.com/view/29373209/2sBXikoWmf |
+| Production  | `https://smart-logistics-api-cb2c.onrender.com` | https://documenter.getpostman.com/view/29373209/2sBXikoWvW |
 
 ---
 
@@ -39,6 +74,41 @@ DATABASE_URL=postgresql://user:pass@host:5432/postgres
 
 ```env
 DATABASE_URL=postgresql://user:pass@host:5432/postgres
+```
+
+### Database Setup
+
+You have two options for the database:
+
+#### Option A — Use the provided Supabase instance (recommended for local dev)
+
+A shared Supabase instance is available for local development. The `DATABASE_URL` has been sent to you via email — just paste it into your `.env.development` file.
+
+#### Option B — Create your own Supabase instance
+
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Go to **Project Settings → Database → Connection String** and select **Session Pooler**
+3. Copy the connection string and set it as your `DATABASE_URL`
+4. Open the **SQL Editor** in your Supabase dashboard and run the following to create a dedicated Prisma user:
+
+```sql
+create user "prisma" with password 'your_strong_password' bypassrls createdb;
+grant "prisma" to "postgres";
+grant usage on schema public to prisma;
+grant create on schema public to prisma;
+grant all on all tables in schema public to prisma;
+grant all on all routines in schema public to prisma;
+grant all on all sequences in schema public to prisma;
+alter default privileges for role postgres in schema public grant all on tables to prisma;
+alter default privileges for role postgres in schema public grant all on routines to prisma;
+alter default privileges for role postgres in schema public grant all on sequences to prisma;
+grant pg_signal_backend to prisma;
+```
+
+5. Update your `DATABASE_URL` to use the `prisma` user credentials:
+
+```env
+DATABASE_URL=postgresql://prisma:your_strong_password@your-supabase-host:5432/postgres
 ```
 
 ---
@@ -69,18 +139,29 @@ npm run prisma:seed
 npm run prisma:dev -- studio -- --port 5555
 ```
 
-### Run locally
+### Running the Server
+
+There are two ways to run the API locally. **Docker Compose is recommended.**
+
+#### Option A — Docker Compose (Recommended)
+
+Docker Compose is the preferred way to run this project locally. It handles the environment, networking, and container lifecycle in one command — no need to manually pass env vars or manage ports.
+
+```bash
+docker compose up -d --build
+```
+
+> Server runs at `http://localhost:3000`
+
+#### Option B — Run directly with Node
+
+Use this only if you prefer not to use Docker or are debugging outside of a container. Requires Node.js 20+ and a running PostgreSQL instance configured in `.env.development`.
 
 ```bash
 npm run start:dev
 ```
 
-### Docker Compose
-
-```bash
-# Build and Start
-docker compose up -d --build
-```
+> Server runs at `http://localhost:3000`
 
 ---
 
@@ -176,6 +257,11 @@ npm test
 
 Base path: `/api/v1`
 
+| Environment | Base URL                                               |
+| ----------- | ------------------------------------------------------ |
+| Local       | `http://localhost:3000/api/v1`                         |
+| Production  | `https://smart-logistics-api-cb2c.onrender.com/api/v1` |
+
 ### Inventory
 
 | Method | Path                                | Description                        |
@@ -203,6 +289,8 @@ Base path: `/api/v1`
 
 ## Error Format
 
+All validation errors are caught by Zod and returned in a consistent shape:
+
 ```json
 {
   "error": "COLD_ITEM_WRONG_WAREHOUSE",
@@ -210,13 +298,3 @@ Base path: `/api/v1`
   "code": 422
 }
 ```
-
----
-
-## Business Rules
-
-- **Cold storage** — Cold items cannot be stored in or transferred to Standard warehouses.
-- **Atomic transfers** — Transfers are all-or-nothing; any failure leaves stock untouched.
-- **Ghost stock prevention** — SKU mismatch between source inventory and transfer request is caught and rejected.
-- **Paginated reports** — `/inventory/report` accepts `page` and `limit` query params.
-- **Safe deletion** — Warehouses can only be deleted when empty; non-empty returns `422`.
