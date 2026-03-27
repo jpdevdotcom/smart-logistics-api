@@ -24,17 +24,19 @@ Inventory and warehouse management API with strict business rules, atomic transf
 
 ## Tech Stack
 
-| Layer            | Technology                     |
-| ---------------- | ------------------------------ |
-| Language         | TypeScript                     |
-| Runtime          | Node.js 20+                    |
-| ORM              | Prisma                         |
-| Validation       | Zod                            |
-| Database         | PostgreSQL (Supabase or local) |
-| Package Manager  | npm                            |
-| Containerization | Docker                         |
-| Unit Test        | Vitest                         |
-| Hosting          | Render                         |
+| Layer             | Technology                     |
+| ----------------- | ------------------------------ |
+| Language          | TypeScript                     |
+| Runtime           | Node.js 20+                    |
+| Node.js Framework | Express                        |
+| ORM               | Prisma                         |
+| Validation        | Zod                            |
+| Database          | PostgreSQL (Supabase or local) |
+| Package Manager   | npm                            |
+| Containerization  | Docker                         |
+| Unit Test         | Vitest                         |
+| Hosting           | Render                         |
+| API Testing Tool  | Postman                        |
 
 ---
 
