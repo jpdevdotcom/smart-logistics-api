@@ -60,6 +60,16 @@ https://smart-logistics-api-cb2c.onrender.com
 
 ---
 
+## Web App
+
+The web client that integrates this API is available at:
+
+```
+https://smart-logostics-client.pages.dev/warehouses
+```
+
+---
+
 ## Postman Documentation
 
 | Environment | Base URL                                        | Docs                                                       |
