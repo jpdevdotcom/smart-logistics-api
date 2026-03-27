@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { requestLogger } from "./middleware/request-logger.middleware";
 import v1Routes from "./routes/v1.routes";
 
@@ -9,6 +10,12 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.use(requestLogger);
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN ?? "*",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 app.get("/health", (_req, res) => {
