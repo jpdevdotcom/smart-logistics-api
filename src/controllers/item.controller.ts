@@ -1,18 +1,23 @@
 import { Request, Response } from "express";
 import { getItemById, getItemBySku } from "../models/item.model";
+import { apiError } from "../utils/api-error";
 import { itemView } from "../views/item.view";
 
 export const getItemByIdHandler = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
 
   if (!Number.isInteger(id)) {
-    return res.status(400).json({ error: "Invalid item id." });
+    return res
+      .status(400)
+      .json(apiError("VALIDATION_ERROR", "Invalid item id.", 400));
   }
 
   const item = await getItemById(id);
 
   if (!item) {
-    return res.status(404).json({ error: "Item not found." });
+    return res
+      .status(404)
+      .json(apiError("ITEM_NOT_FOUND", "Item not found.", 404));
   }
 
   return res.status(200).json(itemView(item));
@@ -24,7 +29,9 @@ export const getItemBySkuHandler = async (req: Request, res: Response) => {
   const item = await getItemBySku(sku as string);
 
   if (!item) {
-    return res.status(404).json({ error: "Item not found." });
+    return res
+      .status(404)
+      .json(apiError("ITEM_NOT_FOUND", "Item not found.", 404));
   }
 
   return res.status(200).json(itemView(item));

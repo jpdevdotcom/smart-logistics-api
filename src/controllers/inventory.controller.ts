@@ -11,6 +11,9 @@ import {
   inventoryReportView,
   inventoryView,
 } from "../views/inventory.view";
+import { transferInventory } from "../models/inventory.model";
+import { TransferInventoryInput } from "../validators/inventory.schema";
+import { transferView } from "../views/inventory.view";
 
 export const addInventoryController = async (req: Request, res: Response) => {
   try {
@@ -21,18 +24,24 @@ export const addInventoryController = async (req: Request, res: Response) => {
     }
 
     if (!("data" in result) || !result.data) {
-      return res.status(500).json({ error: "Inventory data not found." });
+      return res
+        .status(500)
+        .json(
+          apiError(
+            "INTERNAL_SERVER_ERROR",
+            "Inventory data not found.",
+            500,
+          ),
+        );
     }
     return res.status(200).json(inventoryView(result.data));
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Internal server error." });
+    return res
+      .status(500)
+      .json(apiError("INTERNAL_SERVER_ERROR", "Internal server error.", 500));
   }
 };
-
-import { transferInventory } from "../models/inventory.model";
-import { TransferInventoryInput } from "../validators/inventory.schema";
-import { transferView } from "../views/inventory.view";
 
 export const transferInventoryHandler = async (req: Request, res: Response) => {
   try {
@@ -43,13 +52,23 @@ export const transferInventoryHandler = async (req: Request, res: Response) => {
     }
 
     if (!("data" in result) || !result.data) {
-      return res.status(500).json({ error: "Transfer result not found." });
+      return res
+        .status(500)
+        .json(
+          apiError(
+            "INTERNAL_SERVER_ERROR",
+            "Transfer result not found.",
+            500,
+          ),
+        );
     }
 
     return res.status(200).json(transferView(result.data));
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Internal server error." });
+    return res
+      .status(500)
+      .json(apiError("INTERNAL_SERVER_ERROR", "Internal server error.", 500));
   }
 };
 export const inventoryReportHandler = async (req: Request, res: Response) => {
@@ -63,9 +82,11 @@ export const inventoryReportHandler = async (req: Request, res: Response) => {
   }
 
   if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
-    return res.status(422).json(
-      apiError("VALIDATION_ERROR", "limit must be between 1 and 100.", 422),
-    );
+    return res
+      .status(422)
+      .json(
+        apiError("VALIDATION_ERROR", "limit must be between 1 and 100.", 422),
+      );
   }
 
   try {
@@ -73,7 +94,9 @@ export const inventoryReportHandler = async (req: Request, res: Response) => {
     return res.status(200).json(inventoryReportView(report));
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Internal server error." });
+    return res
+      .status(500)
+      .json(apiError("INTERNAL_SERVER_ERROR", "Internal server error.", 500));
   }
 };
 
@@ -81,13 +104,17 @@ export const getInventoryByIdHandler = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
 
   if (!Number.isInteger(id)) {
-    return res.status(400).json({ error: "Invalid inventory id." });
+    return res
+      .status(400)
+      .json(apiError("VALIDATION_ERROR", "Invalid inventory id.", 400));
   }
 
   const inventory = await getInventoryById(id);
 
   if (!inventory) {
-    return res.status(404).json({ error: "Inventory not found." });
+    return res
+      .status(404)
+      .json(apiError("INVENTORY_NOT_FOUND", "Inventory not found.", 404));
   }
 
   return res.status(200).json(inventoryDetailView(inventory));
