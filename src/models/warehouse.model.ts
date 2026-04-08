@@ -1,5 +1,6 @@
 import prisma from "../utils/prisma";
 import { apiError } from "../utils/api-error";
+import { WarehouseType } from "@prisma/client";
 
 export const getWarehouseById = async (id: number) => {
   return prisma.warehouse.findFirst({
@@ -35,4 +36,24 @@ export const deleteWarehouse = async (id: number) => {
   });
 
   return { data: updated };
+};
+
+export const createWarehouse = async (input: {
+  name: string;
+  location: string;
+  maxCapacity: number;
+  type: WarehouseType;
+}) => {
+  const { name, location, maxCapacity, type } = input;
+
+  const created = await prisma.warehouse.create({
+    data: {
+      name,
+      location,
+      maxCapacity,
+      type,
+    },
+  });
+
+  return { data: created };
 };

@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
-import { deleteWarehouse, getWarehouseById } from "../models/warehouse.model";
+import {
+  createWarehouse,
+  deleteWarehouse,
+  getWarehouseById,
+} from "../models/warehouse.model";
 import { apiError } from "../utils/api-error";
 import { warehouseView } from "../views/warehouse.view";
+import { CreateWarehouseInput } from "../validators/warehouse.schema";
 
 export const getWarehouseByIdHandler = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
@@ -47,4 +52,25 @@ export const deleteWarehouseHandler = async (req: Request, res: Response) => {
   }
 
   return res.status(200).json(warehouseView(result.data));
+};
+
+export const createWarehouseHandler = async (req: Request, res: Response) => {
+  try {
+    const result = await createWarehouse(req.body as CreateWarehouseInput);
+
+    if (!("data" in result) || !result.data) {
+      return res
+        .status(500)
+        .json(
+          apiError("INTERNAL_SERVER_ERROR", "Warehouse creation failed.", 500),
+        );
+    }
+
+    return res.status(201).json(warehouseView(result.data));
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json(apiError("INTERNAL_SERVER_ERROR", "Internal server error.", 500));
+  }
 };

@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { getItemById, getItemBySku } from "../models/item.model";
+import { createItem, getItemById, getItemBySku } from "../models/item.model";
 import { apiError } from "../utils/api-error";
 import { itemView } from "../views/item.view";
+import { CreateItemInput } from "../validators/item.schema";
 
 export const getItemByIdHandler = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
@@ -35,4 +36,23 @@ export const getItemBySkuHandler = async (req: Request, res: Response) => {
   }
 
   return res.status(200).json(itemView(item));
+};
+
+export const createItemHandler = async (req: Request, res: Response) => {
+  try {
+    const result = await createItem(req.body as CreateItemInput);
+
+    if (!("data" in result) || !result.data) {
+      return res
+        .status(500)
+        .json(apiError("INTERNAL_SERVER_ERROR", "Item creation failed.", 500));
+    }
+
+    return res.status(201).json(itemView(result.data));
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json(apiError("INTERNAL_SERVER_ERROR", "Internal server error.", 500));
+  }
 };
