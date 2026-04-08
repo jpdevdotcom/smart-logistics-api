@@ -57,3 +57,33 @@ export const createWarehouse = async (input: {
 
   return { data: created };
 };
+
+export const getAllWarehouses = async (input: {
+  page: number;
+  limit: number;
+}) => {
+  const { page, limit } = input;
+  const skip = (page - 1) * limit;
+
+  const [total, warehouses] = await Promise.all([
+    prisma.warehouse.count({ where: { deletedAt: null } }),
+    prisma.warehouse.findMany({
+      where: { deletedAt: null },
+      orderBy: { id: "asc" },
+      skip,
+      take: limit,
+    }),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+
+  return {
+    data: warehouses,
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages,
+    },
+  };
+};

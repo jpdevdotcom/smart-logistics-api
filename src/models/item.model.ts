@@ -28,3 +28,29 @@ export const createItem = async (input: {
 
   return { data: created };
 };
+
+export const getAllItems = async (input: { page: number; limit: number }) => {
+  const { page, limit } = input;
+  const skip = (page - 1) * limit;
+
+  const [total, items] = await Promise.all([
+    prisma.item.count(),
+    prisma.item.findMany({
+      orderBy: { id: "asc" },
+      skip,
+      take: limit,
+    }),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+
+  return {
+    data: items,
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages,
+    },
+  };
+};
