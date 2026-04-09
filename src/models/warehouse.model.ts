@@ -10,32 +10,37 @@ export const getWarehouseById = async (id: number) => {
 };
 
 export const deleteWarehouse = async (id: number) => {
-  const warehouse = await prisma.warehouse.findFirst({
-    where: { id, deletedAt: null },
-  });
+  return prisma.$transaction(
+    async (tx) => {
+      const warehouse = await tx.warehouse.findFirst({
+        where: { id, deletedAt: null },
+      });
 
-  if (!warehouse) {
-    return apiError("WAREHOUSE_NOT_FOUND", "Warehouse not found.", 404);
-  }
+      if (!warehouse) {
+        return apiError("WAREHOUSE_NOT_FOUND", "Warehouse not found.", 404);
+      }
 
-  const inventoryCount = await prisma.inventory.count({
-    where: { warehouseId: id, quantity: { gt: 0 } },
-  });
+      const inventoryCount = await tx.inventory.count({
+        where: { warehouseId: id, quantity: { gt: 0 } },
+      });
 
-  if (inventoryCount > 0) {
-    return apiError(
-      "INVENTORY_NOT_EMPTY",
-      "Warehouse cannot be deleted while inventory exists.",
-      422,
-    );
-  }
+      if (inventoryCount > 0) {
+        return apiError(
+          "INVENTORY_NOT_EMPTY",
+          "Warehouse cannot be deleted while inventory exists.",
+          422,
+        );
+      }
 
-  const updated = await prisma.warehouse.update({
-    where: { id },
-    data: { deletedAt: new Date() },
-  });
+      const updated = await tx.warehouse.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      });
 
-  return { data: updated };
+      return { data: updated };
+    },
+    { isolationLevel: "Serializable" },
+  );
 };
 
 export const createWarehouse = async (input: {
