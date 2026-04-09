@@ -40,7 +40,7 @@ model Warehouse {
 model Item {
   id                 Int                @id @default(autoincrement())
   name               String
-  sku                String             @unique @default(dbgenerated("''::character varying")) @db.VarChar(11)
+  sku                String             @unique @default("") @db.VarChar(11)
   storageRequirement StorageRequirement
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
